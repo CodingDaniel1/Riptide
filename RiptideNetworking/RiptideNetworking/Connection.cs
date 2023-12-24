@@ -31,7 +31,7 @@ namespace Riptide
         /// <summary>Invoked when the notify message with the given sequence ID is lost.</summary>
         public Action<ushort> NotifyLost;
         /// <summary>Invoked when a notify message is received.</summary>
-        public Action<Message> NotifyReceived;
+        public Action<ushort, Message> NotifyReceived;
         /// <summary>Invoked when the reliable message with the given sequence ID is successfully delivered.</summary>
         public Action<ushort> ReliableDelivered;
 
@@ -212,7 +212,7 @@ namespace Riptide
             if (notify.ShouldHandle(Converter.UShortFromBits(dataBuffer, Message.HeaderBits + 24)))
             {
                 Buffer.BlockCopy(dataBuffer, 1, message.Data, 1, amount - 1); // Copy payload
-                NotifyReceived?.Invoke(message);
+                NotifyReceived?.Invoke(Id, message);
             }
             else
                 Metrics.NotifyDiscarded++;
